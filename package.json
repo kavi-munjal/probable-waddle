@@ -1,0 +1,27 @@
+{
+  "name": "probable-waddle",
+  "version": "1.0.0",
+  "description": "scheduler bot",
+  "main": "index.js",
+  "scripts": {
+    "babel": "mkdir -p build && babel server.js -o build/main.bundle.js",
+    "lint": "eslint --fix *.js",
+    "start": "babel-node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kavi-munjal/probable-waddle.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kavi-munjal/probable-waddle/issues"
+  },
+  "homepage": "https://github.com/kavi-munjal/probable-waddle#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "eslint": "^5.2.0"
+  },
+  "presets": [["env", {"targets": {"node": "current"}}]]
+}
