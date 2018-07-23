@@ -23,5 +23,18 @@
     "babel-preset-env": "^1.7.0",
     "eslint": "^5.2.0"
   },
-  "presets": [["env", {"targets": {"node": "current"}}]]
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "node": "current"
+        }
+      }
+    ]
+  ],
+  "dependencies": {
+    "@slack/client": "^4.3.1",
+    "googleapis": "^27.0.0"
+  }
 }
