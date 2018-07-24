@@ -67,4 +67,13 @@ app.get("/google/callback", (req, res) => {
   });
 });
 
+app.post('/slack', function(req, res){
+  console.log(req.body, req.query);
+  res.end();
+});
+
+app.get('/ping', function(req, res){
+  res.send('pong');
+});
+
 module.exports = {app: app, auth: authUrl}

@@ -1,6 +1,5 @@
 const express = require('express');
 const request = require('request')
-const bodyParser = require('body-parser')
 const path = require('path');
 const dialogflow = require('dialogflow');
 var http = require('https');
@@ -8,6 +7,7 @@ var querystring = require('querystring');
 const { IncomingWebhook, WebClient, RTMClient } = require('@slack/client');
 
 const app = require('./app.js').app;
+
 const auth = require('./app.js').auth;
 
 //clients setup
@@ -26,12 +26,9 @@ const sessionPath = sessionClient.sessionPath(projectId, sessionId);
 
 rtm.start();
 
-//need a way to find channel!!
-const channel = 'DBVG1LQR3';
-
 //connected event
 rtm.on('connected', (e) => {
-  console.log('rtm connected to ', channel);
+  console.log('rtm connected to ', e.channel);
 
   var button = [
       {
@@ -59,13 +56,13 @@ rtm.on('connected', (e) => {
 
   web.chat.postMessage({
     token: token,
-    channel: channel,
+    channel: e.channel,
     attachments: JSON.stringify(button),
     text: "its a button, bish"
   });
 
   //connected response
-  rtm.sendMessage('whaddup. it\'s me bish. let\'s schedule some shit. click dis: ' + auth, channel)
+  rtm.sendMessage('whaddup. it\'s me bish. let\'s schedule some shit. click dis: ' + auth, e.channel)
   .then(res=>{
     console.log('Message sent')
   })
