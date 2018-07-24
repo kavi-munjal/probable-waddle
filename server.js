@@ -22,13 +22,11 @@ const sessionId = 'quickstart-session-id';
 const languageCode = 'en-US';
 const sessionClient = new dialogflow.SessionsClient();
 const sessionPath = sessionClient.sessionPath(projectId, sessionId);
-//const bot = new IncomingWebhook(process.env.SLACK_WEBHOOK_URL);
 
 rtm.start();
 
 //connected event
-rtm.on('connected', (e) => {
-  console.log('rtm connected to ', e.channel);
+rtm.on('connected', (event) => {
 
   var button = [
       {
@@ -54,19 +52,19 @@ rtm.on('connected', (e) => {
       }
     ]
 
-  web.chat.postMessage({
-    token: token,
-    channel: e.channel,
-    attachments: JSON.stringify(button),
-    text: "its a button, bish"
-  });
+  // web.chat.postMessage({
+  //   token: token,
+  //   channel: channel,
+  //   attachments: JSON.stringify(button),
+  //   text: "its a button, bish"
+  // });
 
-  //connected response
-  rtm.sendMessage('whaddup. it\'s me bish. let\'s schedule some shit. click dis: ' + auth, e.channel)
-  .then(res=>{
-    console.log('Message sent')
-  })
-  .catch(console.error);
+  //connected response-- fine channel???
+  // rtm.sendMessage('whaddup. it\'s me bish. let\'s schedule some shit. click dis: ' + auth, channel)
+  // .then(res=>{
+  //   console.log('Message sent')
+  // })
+  // .catch(console.error);
 
   //message event
   rtm.on('message', (message) => {
@@ -75,7 +73,6 @@ rtm.on('connected', (e) => {
     (!message.subtype && message.user === rtm.activeUserId) ) {
       return;
     }
-
     //parse message
     var text = message.text.trim().toLowerCase();
     const request = {
@@ -87,7 +84,6 @@ rtm.on('connected', (e) => {
         },
       },
     };
-
     //respond with dialogflow
     sessionClient
     .detectIntent(request)
@@ -98,7 +94,41 @@ rtm.on('connected', (e) => {
       console.log(`  Response: ${result.fulfillmentText}`);
       if (result.intent) {
         console.log(`  Intent: ${result.intent.displayName}`);
-        rtm.sendMessage(result.fulfillmentText, channel)
+        if(result.parameters.fields.name.stringValue && result.parameters.fields["date-time"].stringValue) {
+          var name = result.parameters.fields.name.stringValue;
+          var date = new Date(result.parameters.fields["date-time"].stringValue).toDateString();
+          var button = [
+              {
+                "text": `so you want me to tell you to ${name} at ${date}, jah?`,
+                "fallback": "error",
+                "color": "#3AA3E3",
+                "attachment_type": "default",
+                "callback_id": "test",
+                "actions": [
+                  {
+                    "name": "yes",
+                    "text": "yeeee boi",
+                    "type": "button",
+                    "value": "yes"
+                  },
+                  {
+                    "name": "no",
+                    "text": "nah fam",
+                    "type": "button",
+                    "value": "no"
+                  },
+                ]
+              }
+            ]
+
+          web.chat.postMessage({
+            token: token,
+            channel: message.channel,
+            attachments: JSON.stringify(button),
+            text: "confirm"
+          });
+        }
+        rtm.sendMessage(result.fulfillmentText, message.channel)
         .then(res=>{
           console.log('Message sent')
         })
