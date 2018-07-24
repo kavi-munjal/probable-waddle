@@ -28,10 +28,42 @@ rtm.start();
 //need a way to find channel!!
 const channel = 'DBVG1LQR3';
 
+//connected event
 rtm.on('connected', (e) => {
   console.log('rtm connected to ', channel);
 
-  //connected event
+  var button = [
+      {
+        "text": "button button button",
+        "fallback": "nah fam",
+        "color": "#3AA3E3",
+        "attachment_type": "default",
+        "callback_id": "test",
+        "actions": [
+          {
+            "name": "yes",
+            "text": "yeeee boi",
+            "type": "button",
+            "value": "yes"
+          },
+          {
+            "name": "yes2",
+            "text": "fuuk ya",
+            "type": "button",
+            "value": "yes2"
+          },
+        ]
+      }
+    ]
+
+  web.chat.postMessage({
+    token: token,
+    channel: channel,
+    attachments: JSON.stringify(button),
+    text: "its a button, bish"
+  });
+
+  //connected response
   rtm.sendMessage('whaddup. it\'s me bish. let\'s schedule some shit.', channel)
   .then(res=>{
     console.log('Message sent')
@@ -42,7 +74,7 @@ rtm.on('connected', (e) => {
   rtm.on('message', (message) => {
     // skip messages that are from a bot or my own user ID
     if ( (message.subtype && message.subtype === 'bot_message') ||
-         (!message.subtype && message.user === rtm.activeUserId) ) {
+    (!message.subtype && message.user === rtm.activeUserId) ) {
       return;
     }
 
