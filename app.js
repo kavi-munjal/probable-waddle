@@ -47,29 +47,12 @@ app.get("/google/callback", (req, res) => {
         console.log('No upcoming events found.');
       }
     });
-    // calendar.event.insert({
-    //   calendarId: 'primary',
-    //   summary: 'Do a codealong',
-    //   start: {
-    //     date: new Date(Date.now() + 30000)
-    //   },
-    //   end: {
-    //     date: newDate(Date.now() + 90000)
-    //   },
-    // }, (err, res) => {
-    //   if (err) return console.log(err);
-    //   else console.log(resp.data);
-    // })
   });
 });
 
 app.post('/slack', function(req, res){
   console.log(req.body, req.query);
   res.end();
-});
-
-app.get('/ping', function(req, res){
-  res.send('pong');
 });
 
 module.exports = {app: app, auth: authUrl}
