@@ -1,7 +1,12 @@
 const express = require('express');
 const {google} = require('googleapis');
+const bodyParser = require('body-parser')
 
 const app = express();
+
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
 app.listen(process.env.PORT || 3000);
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
@@ -56,6 +61,15 @@ app.get("/google/callback", (req, res) => {
     //   else console.log(resp.data);
     // })
   });
+});
+
+app.post('/slack', function(req, res){
+  console.log(req.body, req.query);
+  res.end();
+});
+
+app.get('/ping', function(req, res){
+  res.send('pong');
 });
 
 module.exports = {app: app, auth: authUrl}
