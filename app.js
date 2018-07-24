@@ -20,6 +20,41 @@ const authUrl = oAuth2Client.generateAuthUrl({
 
 console.log(authUrl);
 
+function makeCalendarAPICall(token) {
+
+  oauth2Client.setCredentials(token);
+
+  oauth2Client.on('tokens', (tokens) => {
+    if (tokens.refresh_token) {
+      // store the refresh_token in my database!
+      console.log(tokens.refresh_token);
+    }
+    console.log(tokens.access_token);
+  });
+
+  const calendar = google.calendar({version: 'v3', auth: oauth2Client});
+  calendar.events.insert({
+    calendarId: 'primary', // Go to setting on your calendar to get Id
+    'resource': {
+      'summary': 'Tell Luca he is beautiful',
+      'description': 'He really, really is',
+      'start': {
+        'date': '2018-07-25',
+        'timeZone': 'America/Los_Angeles'
+      },
+      'end': {
+        'date': '2018-07-25',
+        'timeZone': 'America/Los_Angeles'
+      },
+    }
+  }, (err, {data}) => {
+    if (err) return console.log('The API returned an error: ' + err);
+    console.log(data)
+  })
+  return;
+
+}
+
 app.post('/slack', function(req, res) {
   console.log(req.body, req.query);
   res.end();
@@ -51,19 +86,6 @@ app.get("/google/callback", (req, res) => {
         console.log('No upcoming events found.');
       }
     });
-    // calendar.event.insert({
-    //   calendarId: 'primary',
-    //   summary: 'Do a codealong',
-    //   start: {
-    //     date: new Date(Date.now() + 30000)
-    //   },
-    //   end: {
-    //     date: newDate(Date.now() + 90000)
-    //   },
-    // }, (err, res) => {
-    //   if (err) return console.log(err);
-    //   else console.log(resp.data);
-    // })
   });
 });
 
