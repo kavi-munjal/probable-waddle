@@ -94,8 +94,4 @@ app.post('/slack', function(req, res){
   res.end();
 });
 
-app.get('/ping', function(req, res){
-  res.send('pong');
-});
-
 module.exports = {app: app, auth: authUrl}
