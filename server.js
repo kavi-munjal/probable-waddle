@@ -7,7 +7,8 @@ var http = require('https');
 var querystring = require('querystring');
 const { IncomingWebhook, WebClient, RTMClient } = require('@slack/client');
 
-const app = express();
+const app = require('./app.js').app;
+const auth = require('./app.js').auth;
 
 //clients setup
 const token = process.env.SLACK_TOKEN;
@@ -64,7 +65,7 @@ rtm.on('connected', (e) => {
   });
 
   //connected response
-  rtm.sendMessage('whaddup. it\'s me bish. let\'s schedule some shit.', channel)
+  rtm.sendMessage('whaddup. it\'s me bish. let\'s schedule some shit. click dis: ' + auth, channel)
   .then(res=>{
     console.log('Message sent')
   })

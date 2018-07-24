@@ -56,4 +56,6 @@ app.get("/google/callback", (req, res) => {
     //   else console.log(resp.data);
     // })
   });
-})
+});
+
+module.exports = {app: app, auth: authUrl}
