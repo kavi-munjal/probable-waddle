@@ -27,7 +27,8 @@ rtm.start();
 
 //connected event
 rtm.on('connected', (event) => {
-
+  console.log('connected')
+  // let user = await User.findOne(slackId: event.id)
   var button = [
       {
         "text": "button button button",
@@ -65,14 +66,17 @@ rtm.on('connected', (event) => {
   //   console.log('Message sent')
   // })
   // .catch(console.error);
+});
 
   //message event
   rtm.on('message', (message) => {
+    console.log(message)
     // skip messages that are from a bot or my own user ID
     if ( (message.subtype && message.subtype === 'bot_message') ||
-    (!message.subtype && message.user === rtm.activeUserId) ) {
+    (!message.subtype && message.user === 'UBVC0UCDQ') ) {
       return;
     }
+    console.log(message.user === 'UBVC0UCDQ')
     //parse message
     var text = message.text.trim().toLowerCase();
     const request = {
@@ -138,4 +142,3 @@ rtm.on('connected', (event) => {
       }
     });
   });
-});
