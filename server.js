@@ -59,7 +59,7 @@ rtm.on('connected', (event) => {
   //   text: "its a button, bish"
   // });
 
-  //connected response-- fine channel???
+  // connected response-- fine channel???
   // rtm.sendMessage('whaddup. it\'s me bish. let\'s schedule some shit. click dis: ' + auth, channel)
   // .then(res=>{
   //   console.log('Message sent')
