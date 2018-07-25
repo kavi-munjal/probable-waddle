@@ -37,8 +37,9 @@ function makeCalendarAPICall(token) {
 
   const calendar = google.calendar({version: 'v3', auth: oAuth2Client});
   calendar.events.insert({
+    auth: oAuth2Client,
     calendarId: 'primary', // Go to setting on your calendar to get Id
-    'resource': {
+    resource: {
       'summary': 'Tell Luca he is beautiful',
       'description': 'He really, really is',
       'start': {
@@ -52,20 +53,11 @@ function makeCalendarAPICall(token) {
     }
   }, (err, {data}) => {
     if (err) return console.log('The API returned an error: ' + err);
-    console.log(data)
-  })
+    else console.log(data)
+  });
   return;
 
 }
-
-app.post('/slack', function(req, res) {
-  console.log(JSON.parse(req.body.payload))
-  if (JSON.parse(req.body.payload).actions[0].name === 'yes') {
-    console.log('confirmed')
-      makeCalendarAPICall(usertoken)
-  }
-  res.end();
-})
 
 app.get("/google/callback", (req, res) => {
   console.log(req.query);
@@ -98,8 +90,12 @@ app.get("/google/callback", (req, res) => {
   res.end();
 });
 
-app.post('/slack', function(req, res){
-  console.log(req.body, req.query);
+app.post('/slack', function(req, res) {
+  console.log(JSON.parse(req.body.payload))
+  if (JSON.parse(req.body.payload).actions[0].name === 'yes') {
+    console.log('confirmed')
+      makeCalendarAPICall(usertoken)
+  }
   res.end();
 });
 

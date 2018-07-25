@@ -94,7 +94,7 @@ rtm.on('connected', (event) => {
       console.log(`  Response: ${result.fulfillmentText}`);
       if (result.intent) {
         console.log(`  Intent: ${result.intent.displayName}`);
-        if(result.parameters.fields.name.stringValue && result.parameters.fields["date-time"].stringValue) {
+        if(result.parameters.fields.name && result.parameters.fields["date-time"]) {
           var name = result.parameters.fields.name.stringValue;
           var date = new Date(result.parameters.fields["date-time"].stringValue).toDateString();
           var button = [
