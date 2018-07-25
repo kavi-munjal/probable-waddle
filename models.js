@@ -17,15 +17,18 @@ const taskSchema = mongoose.Schema({
 })
 
 const userSchema = mongoose.Schema({
-  tokens: {
-    accessToken: String,
-    refreshToken: String,
-  }
-  googleId: String,
-  defaultSetting: {
-    meetingLength: 30
+  googleTokens: {
+    type: Object,
+    required: true
   },
-  slackId: String,
+  googleId: String,
+  // defaultSetting: {
+  //   meetingLength: 30
+  // },
+  slackId: {
+    type: String,
+    required: true
+  },
   slackUsername: String,
   slackEmail: String,
   slackDMId: String
