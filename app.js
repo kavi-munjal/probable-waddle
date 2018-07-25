@@ -6,7 +6,6 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-
 app.listen(process.env.PORT || 3000);
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
@@ -19,7 +18,54 @@ const authUrl = oAuth2Client.generateAuthUrl({
   scope: SCOPES,
 });
 
+//JUST FOR TESTING
+let usertoken;
+
 console.log(authUrl);
+
+function makeCalendarAPICall(token) {
+
+  oAuth2Client.setCredentials(token);
+
+  oAuth2Client.on('tokens', (tokens) => {
+    if (tokens.refresh_token) {
+      // store the refresh_token in my database!
+      console.log(tokens.refresh_token);
+    }
+    console.log(tokens.access_token);
+  });
+
+  const calendar = google.calendar({version: 'v3', auth: oAuth2Client});
+  calendar.events.insert({
+    calendarId: 'primary', // Go to setting on your calendar to get Id
+    'resource': {
+      'summary': 'Tell Luca he is beautiful',
+      'description': 'He really, really is',
+      'start': {
+        'date': '2018-07-25',
+        'timeZone': 'America/Los_Angeles'
+      },
+      'end': {
+        'date': '2018-07-25',
+        'timeZone': 'America/Los_Angeles'
+      },
+    }
+  }, (err, {data}) => {
+    if (err) return console.log('The API returned an error: ' + err);
+    console.log(data)
+  })
+  return;
+
+}
+
+app.post('/slack', function(req, res) {
+  console.log(JSON.parse(req.body.payload))
+  if (JSON.parse(req.body.payload).actions[0].name === 'yes') {
+    console.log('confirmed')
+      makeCalendarAPICall(usertoken)
+  }
+  res.end();
+})
 
 app.get("/google/callback", (req, res) => {
   console.log(req.query);
@@ -27,6 +73,7 @@ app.get("/google/callback", (req, res) => {
   oAuth2Client.getToken(req.query.code, (err, token) => {
     if (err) return callback(err);
     oAuth2Client.setCredentials(token);
+    usertoken = token;
     const calendar = google.calendar({version: 'v3', auth: oAuth2Client});
     calendar.events.list({
       calendarId: 'primary',
@@ -48,6 +95,7 @@ app.get("/google/callback", (req, res) => {
       }
     });
   });
+  res.end();
 });
 
 app.post('/slack', function(req, res){
