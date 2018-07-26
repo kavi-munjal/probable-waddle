@@ -5,6 +5,7 @@ const dialogflow = require('dialogflow');
 var http = require('https');
 var querystring = require('querystring');
 const { IncomingWebhook, WebClient, RTMClient } = require('@slack/client');
+var User = require('./models').User;
 
 const app = require('./app.js').app;
 
@@ -28,45 +29,46 @@ rtm.start();
 //connected event
 rtm.on('connected', (event) => {
   console.log('connected')
-  // let user = await User.findOne(slackId: event.id)
-  var button = [
-      {
-        "text": "button button button",
-        "fallback": "nah fam",
-        "color": "#3AA3E3",
-        "attachment_type": "default",
-        "callback_id": "test",
-        "actions": [
-          {
-            "name": "yes",
-            "text": "yeeee boi",
-            "type": "button",
-            "value": "yes"
-          },
-          {
-            "name": "yes2",
-            "text": "fuuk ya",
-            "type": "button",
-            "value": "yes2"
-          },
-        ]
-      }
-    ]
-
-  // web.chat.postMessage({
-  //   token: token,
-  //   channel: channel,
-  //   attachments: JSON.stringify(button),
-  //   text: "its a button, bish"
-  // });
-
-  // connected response-- fine channel???
-  // rtm.sendMessage('whaddup. it\'s me bish. let\'s schedule some shit. click dis: ' + auth, channel)
-  // .then(res=>{
-  //   console.log('Message sent')
-  // })
-  // .catch(console.error);
 });
+  // let user = await User.findOne(slackId: event.id)
+//   var button = [
+//       {
+//         "text": "button button button",
+//         "fallback": "nah fam",
+//         "color": "#3AA3E3",
+//         "attachment_type": "default",
+//         "callback_id": "test",
+//         "actions": [
+//           {
+//             "name": "yes",
+//             "text": "yeeee boi",
+//             "type": "button",
+//             "value": "yes"
+//           },
+//           {
+//             "name": "yes2",
+//             "text": "fuuk ya",
+//             "type": "button",
+//             "value": "yes2"
+//           },
+//         ]
+//       }
+//     ]
+//
+//   web.chat.postMessage({
+//     token: token,
+//     channel: channel,
+//     attachments: JSON.stringify(button),
+//     text: "its a button, bish"
+//   });
+//
+//   // connected response-- find channel???
+//   rtm.sendMessage('whaddup. it\'s me bish. let\'s schedule some shit. click dis: ' + auth, channel)
+//   .then(res=>{
+//     console.log('Message sent')
+//   })
+//   .catch(console.error);
+// });
 
   //message event
   rtm.on('message', (message) => {
@@ -76,7 +78,11 @@ rtm.on('connected', (event) => {
     (!message.subtype && message.user === 'UBVC0UCDQ') ) {
       return;
     }
-    console.log(message.user === 'UBVC0UCDQ')
+    User.findOne({ slackId: message.user }, (err, user) => {
+      if(!user){
+      return rtm.sendMessage(`Please sign with google ${auth(message.user)}`, message.channel)
+      }
+    });
     //parse message
     var text = message.text.trim().toLowerCase();
     const request = {
@@ -98,9 +104,11 @@ rtm.on('connected', (event) => {
       console.log(`  Response: ${result.fulfillmentText}`);
       if (result.intent) {
         console.log(`  Intent: ${result.intent.displayName}`);
-        if(result.parameters.fields.name.stringValue && result.parameters.fields["date-time"].stringValue) {
-          var name = result.parameters.fields.name.stringValue;
-          var date = new Date(result.parameters.fields["date-time"].stringValue).toDateString();
+        let name = result.parameters.fields.name.stringValue;
+        let date = result.parameters.fields["date-time"].stringValue;
+        console.log('name: ', name, 'date: ', date)
+        if(name && date) {
+          date = new Date(date).toDateString();
           var button = [
               {
                 "text": `so you want me to tell you to ${name} at ${date}, jah?`,
@@ -113,7 +121,7 @@ rtm.on('connected', (event) => {
                     "name": "yes",
                     "text": "yeeee boi",
                     "type": "button",
-                    "value": "yes"
+                    "value": JSON.stringify({name: name, date: date})
                   },
                   {
                     "name": "no",
