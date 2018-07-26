@@ -132,7 +132,6 @@ rtm.on('connected', (event) => {
                 ]
               }
             ]
-
           web.chat.postMessage({
             token: token,
             channel: message.channel,

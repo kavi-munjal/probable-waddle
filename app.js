@@ -70,11 +70,10 @@ function getClient() {
           'timeZone': 'America/Los_Angeles'
         },
       }
-    }, (err, resp) => {
-      if (err) return console.log('The API returned an error: ' + err);
     })
-    return;
   }
+
+
 
   app.post('/slack', function(req, res) {
     console.log("THIS", req.body.payload)
